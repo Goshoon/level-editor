@@ -4,5 +4,6 @@
 class Panel
 {
 public:
-	void Render(const vec4<float>& area);
+	virtual void Render(SDL_Renderer* renderer, const vec4<float>& area);
+	SDL_FRect
 };

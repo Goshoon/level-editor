@@ -17,12 +17,12 @@ int main(int argc, char* argv[])
 
 		application.Update();
 
-		// Draw Methods
 		if (application.currentLevel != nullptr)
 			application.currentLevel->Update();
 
+		// Draw Methods
 		application.Display();
-		
+
 		if (application.currentLevel != nullptr)
 			application.currentLevel->Render(application.renderer);
 

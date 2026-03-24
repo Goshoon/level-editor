@@ -18,7 +18,7 @@ public:
 	float scale;
 
 	vec2<float> f_cursorPosition;
-	vec4<float> f_camera;
+	vec4<float> f_cameraPosition;
 	vec4<int> rgba_backgroundColor;
 
 	void Update();

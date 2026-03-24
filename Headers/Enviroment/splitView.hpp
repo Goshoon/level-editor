@@ -5,7 +5,7 @@
 class SplitView
 {
 public:
-	float ratio = 0.7f;
+	float ratio = 0.5f;
 	bool dragging = false;
 
 	std::unique_ptr<Panel> top;
