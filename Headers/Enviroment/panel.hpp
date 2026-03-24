@@ -4,5 +4,5 @@
 class Panel
 {
 public:
-	void Render(const vec2<float>& area) = 0;
+	void Render(const vec4<float>& area);
 };
