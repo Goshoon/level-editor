@@ -80,20 +80,22 @@ void Application::Update()
 
 void Application::Display() 
 {
-	SDL_SetRenderDrawColor(renderer, 33, 37, 41, 255);
+	//SDL_SetRenderDrawColor(renderer, 33, 37, 41, 255);
     SDL_RenderClear(renderer);
 }
 
 void Application::DrawEverything()
 {
+	// Bug: Using the ImGui context makes the level dissapear
+	if (currentLevel != nullptr)
+		splitView.Render(renderer, windowArea);
+
 	ImGui::Render();
 	ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), renderer);
 
-	if (currentLevel != nullptr)
-		splitView.Render(renderer, windowArea);
-	
-	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255 );
+	SDL_SetRenderDrawColor(renderer, 33, 37, 41, 255);
 	SDL_RenderPresent(renderer);
+
 }
 
 void Application::Input()

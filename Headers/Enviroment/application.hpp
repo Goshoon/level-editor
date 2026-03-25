@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <utility>
 #include <SDL3/SDL.h>
 
 #include "enums.hpp"
@@ -20,6 +21,8 @@ private:
   	Application& operator=(const Application&) = delete;
 
   	SDL_FRect windowArea = { 0.0f, 0.0f, 1920.0f, 1080.0f };
+  	SplitView splitView;
+	MouseState mouse;
 
 	void InitSDL();
 	void InitImgui();
@@ -36,9 +39,6 @@ public:
 
 	SDL_Window* window;
 	SDL_Renderer* renderer;
-	SplitView splitView;
-	MouseState mouse;
-
 	bool done = false;
 
 	void Update();

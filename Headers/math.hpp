@@ -37,5 +37,4 @@ struct vec4
 		//	THIS IS JUST A TEMPORAL SOLUTION.
     }
 	*/
-
 };

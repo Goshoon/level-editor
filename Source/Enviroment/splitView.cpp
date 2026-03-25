@@ -2,9 +2,20 @@
 
 void SplitView::Update(MouseState& mouse, const SDL_FRect& area)
 {
+	// Drag windows!
+	float divisionLine = area.h * ratio;
+	short divisionBorder = 2;
 	if (mouse.mouseButtonLeft)
 	{
-		ratio = mouse.mousePosition.y - area.h;
+		if (mouse.f_mousePosition.y < divisionLine+divisionBorder && mouse.f_mousePosition.y > divisionLine-divisionBorder)
+			dragging = true;
+
+		if (dragging)
+			ratio = mouse.f_mousePosition.y / area.h;
+	}
+	else
+	{
+		dragging = false;
 	}
 }
 
