@@ -2,6 +2,8 @@
 #include "imgui.h"
 #include "application.hpp"
 
+// color palette: https://coolors.co/palette/f8f9fa-e9ecef-dee2e6-ced4da-adb5bd-6c757d-495057-343a40-212529
+
 int main(int argc, char* argv[])
 {
 	while (!Application::GetInstance().done)
@@ -17,15 +19,8 @@ int main(int argc, char* argv[])
 
 		application.Update();
 
-		if (application.currentLevel != nullptr)
-			application.currentLevel->Update();
-
 		// Draw Methods
 		application.Display();
-
-		if (application.currentLevel != nullptr)
-			application.currentLevel->Render(application.renderer);
-
 		application.DrawEverything();
 	}
 

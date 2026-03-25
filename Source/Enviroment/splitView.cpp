@@ -1,18 +1,41 @@
 #include "splitView.hpp"
 
-void SplitView::Render(const vec4<float>& area)
+void SplitView::Update(MouseState& mouse, const SDL_FRect& area)
 {
-	// area.x = width
-	// area.y = height
-	float dividerY = (area.y * ratio);
+	if (mouse.mouseButtonLeft)
+	{
+		ratio = mouse.mousePosition.y - area.h;
+	}
+}
+
+void SplitView::Render(SDL_Renderer* renderer, const SDL_FRect& area)
+{
+	// area.w = width
+	// area.h = height
+	float dividerY = (area.h * ratio);
 
 	// Top panel
-	vec4<float> topRect = { 0, 0, area.x, dividerY };
+	SDL_FRect topRect = { 0, 0, area.w, dividerY };
 
 	// Bottom panel
-	vec4<float> bottomRect = { 0, dividerY + 5, area.x, area.y - dividerY - 5 };
+	SDL_FRect bottomRect = { 0, dividerY + 5, area.w, area.h - dividerY - 5 };
 
 	// Draw panels
-	top->Render(topRect);
-	bottom->Render(bottomRect);
+	if (top != nullptr)
+	{
+		top->Render(renderer, topRect);
+	}
+	else
+	{
+		std::cout << "Error: no top panel to display!\n";
+	}
+
+	if (bottom != nullptr)
+	{
+		bottom->Render(renderer, bottomRect);
+	}
+	else
+	{
+		std::cout << "Error: no bottom panel to display!\n";
+	}
 }

@@ -1,9 +1,9 @@
 #pragma once
+#include <SDL3/SDL.h>
 #include "math.hpp"
 
 class Panel
 {
 public:
-	virtual void Render(SDL_Renderer* renderer, const vec4<float>& area);
-	SDL_FRect
+	virtual void Render(SDL_Renderer* renderer, const SDL_FRect& area) = 0;
 };

@@ -10,7 +10,7 @@ Application::Application()
 	CreateContext();
 	InitImgui();
 
-	currentLevel = std::make_unique<Level>(640, 640); // MAKING A TEST LEVEL
+	currentLevel = std::make_shared<Level>(640, 640); // MAKING A TEST LEVEL
 }
 
 void Application::InitSDL()
@@ -61,11 +61,26 @@ void Application::CreateContext()
 void Application::Update() 
 {
 	UserInterface();
+
+	// Get Window resolution updated
+	int winW = 0, winH = 0;
+	SDL_GetWindowSize(window, &winW, &winH);
+	windowArea.x = 0;
+	windowArea.y = 0;
+	windowArea.w = static_cast<float>(winW);
+	windowArea.h = static_cast<float>(winH);
+
+	if (currentLevel != nullptr)
+	{
+		splitView.top = currentLevel;
+		splitView.Update(mouse, windowArea);
+		currentLevel->Update();
+	}
 }
 
 void Application::Display() 
 {
-	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+	SDL_SetRenderDrawColor(renderer, 33, 37, 41, 255);
     SDL_RenderClear(renderer);
 }
 
@@ -73,6 +88,10 @@ void Application::DrawEverything()
 {
 	ImGui::Render();
 	ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), renderer);
+
+	if (currentLevel != nullptr)
+		splitView.Render(renderer, windowArea);
+	
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255 );
 	SDL_RenderPresent(renderer);
 }
@@ -92,8 +111,8 @@ void Application::Input()
 			break;
 			case SDL_EVENT_MOUSE_MOTION:
 			{
-				/*
-        		SDL_GetMouseState(&mPosition.x, &mPosition.y);
+        		SDL_GetMouseState(&mouse.f_mousePosition.x, &mouse.f_mousePosition.y);
+        		/*
         		mPosition.x /= (int)RENDER_SCALE;
         		mPosition.y /= (int)RENDER_SCALE;
         		*/
@@ -111,29 +130,25 @@ void Application::Input()
 			break;
 			case SDL_EVENT_MOUSE_BUTTON_DOWN:
 			{
-				/*
 				switch(event.button.button)
 				{
 					case SDL_BUTTON_LEFT:
 					{
-						mbLeft = true;
+						mouse.mouseButtonLeft = true;
 					}
 					break;
 					case SDL_BUTTON_RIGHT:
 					{
-						mbRight = true;
+						mouse.mouseButtonRight = true;
 					}
 					break;
 				}
-				*/
 			}
 			break;
 			case SDL_EVENT_MOUSE_BUTTON_UP:
 			{
-				/*
-				mbLeft = false;
-				mbRight = false;
-				*/
+				mouse.mouseButtonLeft = false;
+				mouse.mouseButtonRight = false;
 			}
 			break;
         }

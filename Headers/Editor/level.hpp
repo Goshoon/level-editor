@@ -6,8 +6,10 @@
 #include <cstdint>
 
 #include "math.hpp"
+#include "panel.hpp"
 
-class Level
+
+class Level : public Panel
 {
 public:
 	Level();
@@ -22,5 +24,5 @@ public:
 	vec4<int> rgba_backgroundColor;
 
 	void Update();
-	void Render(SDL_Renderer* renderer);
+	void Render(SDL_Renderer* renderer, const SDL_FRect& area);
 };

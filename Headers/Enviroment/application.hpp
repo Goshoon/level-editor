@@ -4,6 +4,9 @@
 
 #include "enums.hpp"
 #include "level.hpp"
+#include "splitView.hpp"
+#include "math.hpp"
+#include "mouseState.hpp"
 
 #include "imgui.h"
 #include "imgui_impl_sdl3.h"
@@ -15,6 +18,8 @@ private:
 	Application();											// Initialization of Inputs, Window and Renderer
 	Application(const Application&) = delete;
   	Application& operator=(const Application&) = delete;
+
+  	SDL_FRect windowArea = { 0.0f, 0.0f, 1920.0f, 1080.0f };
 
 	void InitSDL();
 	void InitImgui();
@@ -31,6 +36,8 @@ public:
 
 	SDL_Window* window;
 	SDL_Renderer* renderer;
+	SplitView splitView;
+	MouseState mouse;
 
 	bool done = false;
 
@@ -41,5 +48,5 @@ public:
 	void Quit();
 
 	// Level Manager
-	std::unique_ptr<Level> currentLevel = nullptr;
+	std::shared_ptr<Level> currentLevel = nullptr;
 };

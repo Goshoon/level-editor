@@ -10,14 +10,12 @@ Level::Level(int w, int h)
 
 void Level::Update() {}
 
-void Level::Render() 
+void Level::Render(SDL_Renderer* renderer, const SDL_FRect& area)
 {
 	// Render level background
-	SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255 );
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255 );
+	SDL_RenderFillRect(renderer, &area); 				// Panel background
 
-	/*
-    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255 );
-    SDL_FRect squareRect = { 0, 0, width, height };
-    SDL_RenderFillRect(renderer, &squareRect);
-    */
+	//SDL_SetRenderDrawColor(renderer, rgba_backgroundColor.x, rgba_backgroundColor.y, rgba_backgroundColor.z, rgba_backgroundColor.w );
+	//SDL_RenderFillRect(renderer, &area); 				// Level area
 }
