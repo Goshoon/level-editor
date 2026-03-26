@@ -74,7 +74,7 @@ void Application::Update()
 	{
 		splitView.top = currentLevel;
 		splitView.Update(mouse, windowArea);
-		currentLevel->Update();
+		currentLevel->Update(mouse, windowArea);
 	}
 }
 
@@ -196,4 +196,9 @@ void Application::Quit()
 	ImGui_ImplSDL3_Shutdown();
 	ImGui::DestroyContext();
 	SDL_Quit();
+}
+
+void Application::NewLevel(std::string& name, int width, int height)
+{
+	//std::pair<Level&, AssetManager&> newLevel;
 }

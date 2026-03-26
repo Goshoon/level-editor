@@ -6,10 +6,9 @@
 
 int main(int argc, char* argv[])
 {
-	while (!Application::GetInstance().done)
+	Application application = Application();
+	while (!application.done)
 	{
-		Application& application = Application::GetInstance(); // Get reference to application
-
 		// Update methods
 		application.Input();
 
@@ -24,6 +23,6 @@ int main(int argc, char* argv[])
 		application.DrawEverything();
 	}
 
-	Application::GetInstance().Quit();
+	application.Quit();
 	return 0;
 }

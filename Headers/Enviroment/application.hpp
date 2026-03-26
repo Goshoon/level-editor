@@ -1,13 +1,15 @@
 #pragma once
 #include <iostream>
 #include <utility>
+#include <unordered_map>
 #include <SDL3/SDL.h>
 
+#include "math.hpp"
 #include "enums.hpp"
 #include "level.hpp"
 #include "splitView.hpp"
-#include "math.hpp"
 #include "mouseState.hpp"
+#include "assetManager.hpp"
 
 #include "imgui.h"
 #include "imgui_impl_sdl3.h"
@@ -16,13 +18,15 @@
 class Application
 {
 private:
-	Application();											// Initialization of Inputs, Window and Renderer
-	Application(const Application&) = delete;
-  	Application& operator=(const Application&) = delete;
-
+  	// Inputs and window data
   	SDL_FRect windowArea = { 0.0f, 0.0f, 1920.0f, 1080.0f };
-  	SplitView splitView;
 	MouseState mouse;
+
+	// Panel manager
+	SplitView splitView;
+
+	// Level Manager
+	std::shared_ptr<Level> currentLevel = nullptr;
 
 	void InitSDL();
 	void InitImgui();
@@ -30,12 +34,10 @@ private:
 	void CreateContext();
 	void InputReleased(SDL_Event* event);
 	void InputPressed(SDL_Event* event);
+
+	void NewLevel(std::string& name, int width, int height);
 public:
-	static Application& GetInstance()
-	{
-		static Application instance;
-    	return instance;
-	}
+	Application();		// Initialization of Inputs, Window and Renderer
 
 	SDL_Window* window;
 	SDL_Renderer* renderer;
@@ -46,7 +48,4 @@ public:
 	void Display();
 	void DrawEverything();
 	void Quit();
-
-	// Level Manager
-	std::shared_ptr<Level> currentLevel = nullptr;
 };
