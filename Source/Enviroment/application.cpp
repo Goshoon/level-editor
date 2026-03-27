@@ -11,6 +11,7 @@ Application::Application()
 	InitImgui();
 
 	currentLevel = std::make_shared<Level>(640, 640); // MAKING A TEST LEVEL
+	currentManager = std::make_shared<AssetManager>(); // MAKING A TEST ASSET MANAGER
 }
 
 void Application::InitSDL()
@@ -73,6 +74,7 @@ void Application::Update()
 	if (currentLevel != nullptr)
 	{
 		splitView.top = currentLevel;
+		splitView.bottom = currentManager ;
 		splitView.Update(mouse, windowArea);
 		currentLevel->Update(mouse, splitView.topRect);
 	}
@@ -164,7 +166,7 @@ void Application::UserInterface()
 	ImGui::BeginMainMenuBar();
 	if (ImGui::BeginMenu("File"))
 	{
-		if (ImGui::MenuItem("New")) {}
+		if (ImGui::MenuItem("New")) createWindow = true;
     	if (ImGui::MenuItem("Save")) {}
     	if (ImGui::MenuItem("Load")) {}
     	ImGui::Separator();
@@ -187,6 +189,69 @@ void Application::UserInterface()
     	ImGui::EndMenu();
     }
     ImGui::EndMainMenuBar();
+
+    if (createWindow)
+{
+    static char buffer[32] = ""; // IMPORTANT: make static so it keeps value
+    static int type = 0; // 0 = Tilesets, 1 = Objects
+
+    ImGuiIO& io = ImGui::GetIO();
+
+    ImVec2 windowSize = ImVec2(320, 180);
+
+    ImGui::SetNextWindowPos(
+        ImVec2(io.DisplaySize.x * 0.5f, io.DisplaySize.y * 0.5f),
+        ImGuiCond_Always,
+        ImVec2(0.5f, 0.5f)
+    );
+
+    ImGui::SetNextWindowSize(windowSize, ImGuiCond_Always);
+
+    ImGuiWindowFlags flags =
+        ImGuiWindowFlags_NoResize |
+        ImGuiWindowFlags_NoCollapse |
+        ImGuiWindowFlags_NoMove;
+
+    ImGui::Begin("Create Level", nullptr, flags);
+
+    // ---- Level Name (label on left, input on right)
+    ImGui::Text("Level name");
+    ImGui::SameLine();
+    ImGui::SetNextItemWidth(-1); // fill remaining width
+    ImGui::InputText("##LevelName", buffer, sizeof(buffer));
+
+    ImGui::Spacing();
+
+    // ---- Type selection (radio buttons = your "markdown thingy")
+    ImGui::Text("Type:");
+    ImGui::RadioButton("Tilesets", &type, 0);
+    ImGui::SameLine();
+    ImGui::RadioButton("Objects", &type, 1);
+
+    ImGui::Spacing();
+    ImGui::Separator();
+    ImGui::Spacing();
+
+    // ---- Buttons centered at bottom
+    float buttonWidth = 80.0f;
+    float totalWidth = buttonWidth * 2 + ImGui::GetStyle().ItemSpacing.x;
+
+    ImGui::SetCursorPosX((ImGui::GetWindowSize().x - totalWidth) * 0.5f);
+
+    if (ImGui::Button("Create", ImVec2(buttonWidth, 0)))
+    {
+        // handle create
+    }
+
+    ImGui::SameLine();
+
+    if (ImGui::Button("Cancel", ImVec2(buttonWidth, 0)))
+    {
+        createWindow = false;
+    }
+
+    ImGui::End();
+}
 }
 
 void Application::Quit()

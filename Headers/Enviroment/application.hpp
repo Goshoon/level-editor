@@ -27,6 +27,7 @@ private:
 
 	// Level Manager
 	std::shared_ptr<Level> currentLevel = nullptr;
+	std::shared_ptr<AssetManager> currentManager = nullptr;
 
 	void InitSDL();
 	void InitImgui();
@@ -34,8 +35,9 @@ private:
 	void CreateContext();
 	void InputReleased(SDL_Event* event);
 	void InputPressed(SDL_Event* event);
-
 	void NewLevel(std::string& name, int width, int height);
+
+	bool createWindow = false;
 public:
 	Application();		// Initialization of Inputs, Window and Renderer
 
