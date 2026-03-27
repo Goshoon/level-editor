@@ -26,10 +26,16 @@ void SplitView::Render(SDL_Renderer* renderer, const SDL_FRect& area)
 	float dividerY = (area.h * ratio);
 
 	// Top panel
-	SDL_FRect topRect = { 0, 0, area.w, dividerY };
+	topRect.x = 0;
+	topRect.y = 0;
+	topRect.w = area.w;
+	topRect.h = dividerY;
 
 	// Bottom panel
-	SDL_FRect bottomRect = { 0, dividerY + 5, area.w, area.h - dividerY - 5 };
+	bottomRect.x = 0;
+	bottomRect.y = dividerY + 5;
+	bottomRect.w = area.w;
+	bottomRect.h = area.h - dividerY - 5;
 
 	// Draw panels
 	if (top != nullptr)
@@ -47,6 +53,6 @@ void SplitView::Render(SDL_Renderer* renderer, const SDL_FRect& area)
 	}
 	else
 	{
-		std::cout << "Error: no bottom panel to display!\n";
+		// std::cout << "Error: no bottom panel to display!\n";
 	}
 }

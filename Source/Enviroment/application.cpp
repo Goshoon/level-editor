@@ -74,13 +74,12 @@ void Application::Update()
 	{
 		splitView.top = currentLevel;
 		splitView.Update(mouse, windowArea);
-		currentLevel->Update(mouse, windowArea);
+		currentLevel->Update(mouse, splitView.topRect);
 	}
 }
 
 void Application::Display() 
 {
-	//SDL_SetRenderDrawColor(renderer, 33, 37, 41, 255);
     SDL_RenderClear(renderer);
 }
 

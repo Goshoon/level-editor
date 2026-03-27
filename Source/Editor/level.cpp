@@ -8,9 +8,9 @@ Level::Level(int w, int h)
 	levelPosition.y = 0;
 	levelPosition.z = w;
 	levelPosition.w = h;
-	rgba_backgroundColor.x = 100;
-	rgba_backgroundColor.y = 0;
-	rgba_backgroundColor.z = 0;
+	rgba_backgroundColor.x = 255;
+	rgba_backgroundColor.y = 255;
+	rgba_backgroundColor.z = 255;
 	rgba_backgroundColor.w = 255;
 }
 
@@ -26,16 +26,15 @@ void Level::Update(MouseState& mouse, const SDL_FRect& area)
 
     	f_oldMousePosition = mouse.f_mousePosition;
 	}
-	else
+	std::cout << dragging << " : "  << mouse.f_mousePosition.y << " : " << area.h << std::endl;
+
+	if (mouse.f_mousePosition.y < area.h && mouse.f_mousePosition.y > area.y) // on level panel bounds
 	{
-		if (mouse.f_mousePosition.y < area.y && mouse.f_mousePosition.y > 0) // on level panel bounds
+		if (mouse.mouseButtonRight) // Mouse Wheel button later
 		{
-			if (mouse.mouseButtonRight) // Mouse Wheel button later
-			{
-				dragging = true;
-				f_oldMousePosition.x = mouse.f_mousePosition.x;
-				f_oldMousePosition.y = mouse.f_mousePosition.y;
-			}
+			dragging = true;
+			f_oldMousePosition.x = mouse.f_mousePosition.x;
+			f_oldMousePosition.y = mouse.f_mousePosition.y;
 		}
 	}
 

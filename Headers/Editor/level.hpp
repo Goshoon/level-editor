@@ -4,6 +4,7 @@
 #include <memory>
 #include <vector>
 #include <cstdint>
+#include <iostream>
 
 #include "math.hpp"
 #include "panel.hpp"
