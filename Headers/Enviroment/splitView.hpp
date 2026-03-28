@@ -6,6 +6,7 @@
 #include "mouseState.hpp"
 #include "panel.hpp"
 #include "level.hpp"
+#include "AssetManager.hpp"
 #include "math.hpp"
 
 class SplitView
@@ -14,8 +15,8 @@ public:
 	float ratio = 0.5f;
 	bool dragging = false;
 
-	std::shared_ptr<Panel> top = nullptr;
-    std::shared_ptr<Panel> bottom = nullptr;
+	Level* top = nullptr;
+    AssetManager* bottom = nullptr;
     SDL_FRect topRect;
 	SDL_FRect bottomRect;
 

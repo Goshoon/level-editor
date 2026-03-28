@@ -6,10 +6,9 @@
 
 #include "math.hpp"
 #include "enums.hpp"
-#include "level.hpp"
 #include "splitView.hpp"
 #include "mouseState.hpp"
-#include "assetManager.hpp"
+#include "editingBound.hpp"
 
 #include "imgui.h"
 #include "imgui_impl_sdl3.h"
@@ -26,8 +25,10 @@ private:
 	SplitView splitView;
 
 	// Level Manager
-	std::shared_ptr<Level> currentLevel = nullptr;
-	std::shared_ptr<AssetManager> currentManager = nullptr;
+	//std::shared_ptr<Level> currentLevel = nullptr;
+	//std::shared_ptr<AssetManager> currentManager = nullptr;
+	std::vector<EditingBound> editingBounds;
+	std::unique_ptr<EditingBound> currentBound = nullptr;
 
 	void InitSDL();
 	void InitImgui();

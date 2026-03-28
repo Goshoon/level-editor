@@ -9,9 +9,6 @@ Application::Application()
 	InitSDL();
 	CreateContext();
 	InitImgui();
-
-	currentLevel = std::make_shared<Level>(640, 640); // MAKING A TEST LEVEL
-	currentManager = std::make_shared<AssetManager>(); // MAKING A TEST ASSET MANAGER
 }
 
 void Application::InitSDL()
@@ -71,12 +68,12 @@ void Application::Update()
 	windowArea.w = static_cast<float>(winW);
 	windowArea.h = static_cast<float>(winH);
 
-	if (currentLevel != nullptr)
+	if (!editingBounds.empty())
 	{
-		splitView.top = currentLevel;
-		splitView.bottom = currentManager ;
+		splitView.top = currentBound->level.get();
+		splitView.bottom = currentBound->assetManager.get();
 		splitView.Update(mouse, windowArea);
-		currentLevel->Update(mouse, splitView.topRect);
+		currentBound->level->Update(mouse, splitView.topRect);
 	}
 }
 
@@ -88,9 +85,8 @@ void Application::Display()
 void Application::DrawEverything()
 {
 	// Bug: Using the ImGui context makes the level dissapear
-	if (currentLevel != nullptr)
+	if (!editingBounds.empty())
 		splitView.Render(renderer, windowArea);
-
 	ImGui::Render();
 	ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), renderer);
 
@@ -115,10 +111,6 @@ void Application::Input()
 			case SDL_EVENT_MOUSE_MOTION:
 			{
         		SDL_GetMouseState(&mouse.f_mousePosition.x, &mouse.f_mousePosition.y);
-        		/*
-        		mPosition.x /= (int)RENDER_SCALE;
-        		mPosition.y /= (int)RENDER_SCALE;
-        		*/
     		}
       		break;
 			case SDL_EVENT_KEY_DOWN:
@@ -192,8 +184,8 @@ void Application::UserInterface()
 
     if (createWindow)
 {
-    static char buffer[32] = ""; // IMPORTANT: make static so it keeps value
-    static int type = 0; // 0 = Tilesets, 1 = Objects
+    static char buffer[32] = ""; 	// IMPORTANT: make static so it keeps value
+    static int type = 0; 			// 0 = Tilesets, 1 = Objects
 
     ImGuiIO& io = ImGui::GetIO();
 
@@ -234,21 +226,15 @@ void Application::UserInterface()
 
     // ---- Buttons centered at bottom
     float buttonWidth = 80.0f;
-    float totalWidth = buttonWidth * 2 + ImGui::GetStyle().ItemSpacing.x;
+    float totalWidth = buttonWidth + ImGui::GetStyle().ItemSpacing.x;
 
     ImGui::SetCursorPosX((ImGui::GetWindowSize().x - totalWidth) * 0.5f);
-
     if (ImGui::Button("Create", ImVec2(buttonWidth, 0)))
-    {
-        // handle create
-    }
-
-    ImGui::SameLine();
-
-    if (ImGui::Button("Cancel", ImVec2(buttonWidth, 0)))
-    {
         createWindow = false;
-    }
+
+	ImGui::SetCursorPosX((ImGui::GetWindowSize().x - totalWidth) * 0.5f);
+    if (ImGui::Button("Cancel", ImVec2(buttonWidth, 0)))
+        createWindow = false;
 
     ImGui::End();
 }
