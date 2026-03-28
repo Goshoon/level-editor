@@ -11,6 +11,11 @@ Application::Application()
 	InitImgui();
 }
 
+Application::~Application()
+{
+	delete currentBound;
+}
+
 void Application::InitSDL()
 {
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) != 0)
@@ -68,13 +73,16 @@ void Application::Update()
 	windowArea.w = static_cast<float>(winW);
 	windowArea.h = static_cast<float>(winH);
 
-	if (!editingBounds.empty())
+	if (currentBound != nullptr)
 	{
 		splitView.top = currentBound->level.get();
 		splitView.bottom = currentBound->assetManager.get();
 		splitView.Update(mouse, windowArea);
 		currentBound->level->Update(mouse, splitView.topRect);
 	}
+
+	if (editingBounds.size() == 1) // if only one element, always focus on the only
+		currentBound = &editingBounds.front();
 }
 
 void Application::Display() 
@@ -85,14 +93,14 @@ void Application::Display()
 void Application::DrawEverything()
 {
 	// Bug: Using the ImGui context makes the level dissapear
-	if (!editingBounds.empty())
+	if (currentBound != nullptr)
 		splitView.Render(renderer, windowArea);
+	
 	ImGui::Render();
 	ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), renderer);
 
 	SDL_SetRenderDrawColor(renderer, 33, 37, 41, 255);
 	SDL_RenderPresent(renderer);
-
 }
 
 void Application::Input()
@@ -178,66 +186,104 @@ void Application::UserInterface()
     }
     if (ImGui::BeginMenu("View"))
 	{
+		if (ImGui::MenuItem("View grid")) {}
     	ImGui::EndMenu();
     }
     ImGui::EndMainMenuBar();
 
     if (createWindow)
-{
-    static char buffer[32] = ""; 	// IMPORTANT: make static so it keeps value
-    static int type = 0; 			// 0 = Tilesets, 1 = Objects
-
-    ImGuiIO& io = ImGui::GetIO();
-
-    ImVec2 windowSize = ImVec2(320, 180);
-
-    ImGui::SetNextWindowPos(
-        ImVec2(io.DisplaySize.x * 0.5f, io.DisplaySize.y * 0.5f),
-        ImGuiCond_Always,
-        ImVec2(0.5f, 0.5f)
-    );
-
-    ImGui::SetNextWindowSize(windowSize, ImGuiCond_Always);
-
-    ImGuiWindowFlags flags =
-        ImGuiWindowFlags_NoResize |
-        ImGuiWindowFlags_NoCollapse |
-        ImGuiWindowFlags_NoMove;
-
-    ImGui::Begin("Create Level", nullptr, flags);
-
-    // ---- Level Name (label on left, input on right)
-    ImGui::Text("Level name");
-    ImGui::SameLine();
-    ImGui::SetNextItemWidth(-1); // fill remaining width
-    ImGui::InputText("##LevelName", buffer, sizeof(buffer));
-
-    ImGui::Spacing();
-
-    // ---- Type selection (radio buttons = your "markdown thingy")
-    ImGui::Text("Type:");
-    ImGui::RadioButton("Tilesets", &type, 0);
-    ImGui::SameLine();
-    ImGui::RadioButton("Objects", &type, 1);
-
-    ImGui::Spacing();
-    ImGui::Separator();
-    ImGui::Spacing();
-
-    // ---- Buttons centered at bottom
-    float buttonWidth = 80.0f;
-    float totalWidth = buttonWidth + ImGui::GetStyle().ItemSpacing.x;
-
-    ImGui::SetCursorPosX((ImGui::GetWindowSize().x - totalWidth) * 0.5f);
-    if (ImGui::Button("Create", ImVec2(buttonWidth, 0)))
-        createWindow = false;
-
-	ImGui::SetCursorPosX((ImGui::GetWindowSize().x - totalWidth) * 0.5f);
-    if (ImGui::Button("Cancel", ImVec2(buttonWidth, 0)))
-        createWindow = false;
-
-    ImGui::End();
-}
+	{
+		static char useName[32] = "";
+    	static bool useTilesets = true;
+    	static bool useObjects  = true;
+    	static int width  = 256;
+    	static int height = 256;
+	
+    	ImGuiIO& io = ImGui::GetIO();
+	
+    	ImVec2 windowSize = ImVec2(360, 240);
+	
+    	ImGui::SetNextWindowPos(
+    	    ImVec2(io.DisplaySize.x * 0.5f, io.DisplaySize.y * 0.5f),
+    	    ImGuiCond_Always,
+    	    ImVec2(0.5f, 0.5f)
+    	);
+	
+    	ImGui::SetNextWindowSize(windowSize, ImGuiCond_Always);
+	
+    	ImGuiWindowFlags flags =
+    	    ImGuiWindowFlags_NoResize |
+    	    ImGuiWindowFlags_NoCollapse |
+    	    ImGuiWindowFlags_NoMove;
+	
+    	ImGui::Begin("Create Level", nullptr, flags);
+	
+    	// ---- Level Name
+    	ImGui::Text("Level name");
+    	ImGui::SameLine();
+    	ImGui::SetNextItemWidth(-1);
+    	ImGui::InputText("##LevelName", useName, sizeof(useName));
+	
+    	ImGui::Spacing();
+	
+    	// ---- Size Inputs
+    	ImGui::Text("Size");
+    	
+    	ImGui::Text("Width");
+    	ImGui::SameLine();
+    	ImGui::SetNextItemWidth(80);
+    	ImGui::InputInt("##Width", &width);
+	
+    	ImGui::SameLine();
+    	
+    	ImGui::Text("Height");
+    	ImGui::SameLine();
+    	ImGui::SetNextItemWidth(80);
+    	ImGui::InputInt("##Height", &height);
+	
+    	// Clamp values
+    	width  = std::clamp(width,  64, 6000);
+    	height = std::clamp(height, 64, 6000);
+	
+    	ImGui::Spacing();
+	
+    	ImGui::Text("Assets types used:");
+    	ImGui::Checkbox("Tilesets", &useTilesets);
+    	ImGui::Checkbox("Objects", &useObjects);
+	
+    	ImGui::Spacing();
+    	ImGui::Separator();
+    	ImGui::Spacing();
+	
+    	float buttonWidth = 80.0f;
+    	float spacing = ImGui::GetStyle().ItemSpacing.x;
+    	float totalWidth = buttonWidth * 2 + spacing;
+	
+    	ImGui::SetCursorPosX((ImGui::GetWindowSize().x - totalWidth) * 0.5f);
+    	if (ImGui::Button("Create", ImVec2(buttonWidth, 0)))
+    	{
+    	    // Prevent it if nothing is selected
+    	    if (useTilesets || useObjects)
+    	    {
+    	    	NewLevel(useName, width, height);
+    	        createWindow = false;
+    	    }
+    	}
+	
+    	ImGui::SameLine();
+	
+    	if (ImGui::Button("Cancel", ImVec2(buttonWidth, 0)))
+    	{
+    	    createWindow = false;
+    	}
+	
+    	if (!useTilesets && !useObjects)
+		{
+    		ImGui::TextColored(ImVec4(1,0,0,1), "Select at least one type");
+		}
+	
+    	ImGui::End();
+	}
 }
 
 void Application::Quit()
@@ -248,7 +294,7 @@ void Application::Quit()
 	SDL_Quit();
 }
 
-void Application::NewLevel(std::string& name, int width, int height)
+void Application::NewLevel(const std::string& name, int width, int height)
 {
-	//std::pair<Level&, AssetManager&> newLevel;
+	editingBounds.emplace_back(name, width, height);
 }

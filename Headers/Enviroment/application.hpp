@@ -1,7 +1,8 @@
 #pragma once
 #include <iostream>
 #include <utility>
-#include <unordered_map>
+#include <vector>
+#include <algorithm>
 #include <SDL3/SDL.h>
 
 #include "math.hpp"
@@ -25,10 +26,10 @@ private:
 	SplitView splitView;
 
 	// Level Manager
-	//std::shared_ptr<Level> currentLevel = nullptr;
-	//std::shared_ptr<AssetManager> currentManager = nullptr;
 	std::vector<EditingBound> editingBounds;
-	std::unique_ptr<EditingBound> currentBound = nullptr;
+	EditingBound* currentBound = nullptr;
+
+	bool createWindow = false;
 
 	void InitSDL();
 	void InitImgui();
@@ -36,14 +37,14 @@ private:
 	void CreateContext();
 	void InputReleased(SDL_Event* event);
 	void InputPressed(SDL_Event* event);
-	void NewLevel(std::string& name, int width, int height);
-
-	bool createWindow = false;
+	void NewLevel(const std::string& name, int width, int height);
 public:
-	Application();		// Initialization of Inputs, Window and Renderer
+	Application();	// Initialization of Inputs, Window and Renderer
+	~Application();
 
 	SDL_Window* window;
 	SDL_Renderer* renderer;
+
 	bool done = false;
 
 	void Update();
