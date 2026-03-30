@@ -1,13 +1,14 @@
 #pragma once
-#include <iostream>
+// Libraries
 #include <memory>
+// SDL3
 #include <SDL3/SDL.h>
-
+// Own
 #include "mouseState.hpp"
 #include "panel.hpp"
-#include "level.hpp"
-#include "AssetManager.hpp"
-#include "math.hpp"
+
+class Level;
+class AssetManager;
 
 class SplitView
 {

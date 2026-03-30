@@ -1,5 +1,9 @@
-#include <iostream>
+#include <SDL3/SDL.h>
+// Imgui
 #include "imgui.h"
+#include "imgui_impl_sdl3.h"
+#include "imgui_impl_sdlrenderer3.h"
+// Own
 #include "application.hpp"
 
 // color palette: https://coolors.co/palette/f8f9fa-e9ecef-dee2e6-ced4da-adb5bd-6c757d-495057-343a40-212529

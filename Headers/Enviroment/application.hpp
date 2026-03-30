@@ -1,36 +1,36 @@
 #pragma once
-#include <iostream>
-#include <utility>
+// Libraries
 #include <vector>
-#include <algorithm>
-#include <SDL3/SDL.h>
-
-#include "math.hpp"
-#include "enums.hpp"
+#include <string>
+// Interface SDL3
+struct SDL_Window;
+struct SDL_Renderer;
+struct SDL_Cursor;
+struct SDL_FRect;
+union SDL_Event;
+// Own
 #include "splitView.hpp"
 #include "mouseState.hpp"
 #include "editingBound.hpp"
-
-#include "imgui.h"
-#include "imgui_impl_sdl3.h"
-#include "imgui_impl_sdlrenderer3.h"
 
 class Application
 {
 private:
   	// Inputs and window data
-  	SDL_Cursor* cursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_POINTER);
-  	SDL_FRect windowArea = { 0.0f, 0.0f, 1920.0f, 1080.0f };
-	MouseState mouse;
+  	SDL_Cursor* cursor = nullptr;
+  	SDL_FRect windowArea;
 
 	// Panel manager
 	SplitView splitView;
+	MouseState mouse;
 
 	// Level Manager
 	std::vector<EditingBound> editingBounds;
 	EditingBound* currentBound = nullptr;
 
+	bool gridWindow = false;
 	bool createWindow = false;
+	bool grid = true;
 
 	void InitSDL();
 	void InitImgui();

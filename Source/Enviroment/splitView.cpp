@@ -1,4 +1,9 @@
 #include "splitView.hpp"
+// Libraries
+#include <iostream>
+// Own
+#include "level.hpp"
+#include "AssetManager.hpp"
 
 void SplitView::Update(MouseState& mouse, const SDL_FRect& area)
 {

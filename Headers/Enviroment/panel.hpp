@@ -1,6 +1,8 @@
 #pragma once
-#include <SDL3/SDL.h>
 #include "math.hpp"
+
+struct SDL_Renderer;
+struct SDL_FRect;
 
 class Panel
 {

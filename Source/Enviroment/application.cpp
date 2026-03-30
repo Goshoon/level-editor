@@ -1,4 +1,16 @@
 #include "application.hpp"
+// Libraries
+#include <iostream>
+#include <utility>
+#include <algorithm>
+// SDL3
+#include <SDL3/SDL.h>
+// Imgui
+#include "imgui.h"
+#include "imgui_impl_sdl3.h"
+#include "imgui_impl_sdlrenderer3.h"
+// Own
+#include "enums.hpp"
 
 Application::Application()
 {
@@ -207,17 +219,44 @@ void Application::UserInterface()
     }
     if (ImGui::BeginMenu("View"))
 	{
-		if (ImGui::MenuItem("View grid"))
+		if (ImGui::MenuItem("grid"))
 		{
-			if (currentBound->level->grid)
-				currentBound->level->grid = false;
-			
-			if (!currentBound->level->grid)
-				currentBound->level->grid = true;
+			if (gridWindow)
+			{
+				gridWindow = false;
+			}
+			else
+			{
+				gridWindow = true;
+			}
 		}
     	ImGui::EndMenu();
     }
     ImGui::EndMainMenuBar();
+
+    if (gridWindow)
+    {
+    	static int width  = 256;
+    	static int height = 256;
+    	ImGui::Begin("Grid options", nullptr);
+    	ImGui::Text("Grid options");
+    	ImGui::Checkbox("Grid", &currentBound->level->grid);
+    	// ---- Size Inputs
+    	ImGui::Text("Size");
+    	
+    	ImGui::Text("Width");
+    	ImGui::SameLine();
+    	ImGui::SetNextItemWidth(80);
+    	ImGui::InputInt("##Width", &currentBound->level->gridSizeX);
+	
+    	ImGui::SameLine();
+    	
+    	ImGui::Text("Height");
+    	ImGui::SameLine();
+    	ImGui::SetNextItemWidth(80);
+    	ImGui::InputInt("##Height", &currentBound->level->gridSizeY);
+    	ImGui::End();
+    }
 
     if (createWindow)
 	{
@@ -246,7 +285,7 @@ void Application::UserInterface()
 	
     	ImGui::Begin("Create Level", nullptr, flags);
 	
-    	// ---- Level Name
+    	// Level name
     	ImGui::Text("Level name");
     	ImGui::SameLine();
     	ImGui::SetNextItemWidth(-1);
@@ -254,7 +293,7 @@ void Application::UserInterface()
 	
     	ImGui::Spacing();
 	
-    	// ---- Size Inputs
+    	// Size inputs
     	ImGui::Text("Size");
     	
     	ImGui::Text("Width");

@@ -1,4 +1,5 @@
 #include "level.hpp"
+#include <SDL3/SDL.h>
 
 Level::Level() {}
 
@@ -27,8 +28,6 @@ void Level::Update(MouseState& mouse, const SDL_FRect& area)
     	f_oldMousePosition = mouse.f_mousePosition;
 	}
 
-	//std::cout << dragging << " : "  << mouse.f_mousePosition.y << " : " << area.h << std::endl;
-
 	if (mouse.f_mousePosition.y < area.h && mouse.f_mousePosition.y > area.y) // on level panel bounds
 	{
 		if (mouse.mouseButtonRight) // Mouse Wheel button later
@@ -49,7 +48,6 @@ void Level::Update(MouseState& mouse, const SDL_FRect& area)
 		scale-=0.05;
 
 	scale = std::clamp(scale, 0.8f, 5.0f);
-	//std::cout << mouse.mouseWheelDown << " : " << mouse.mouseWheelUp << " : " << scale << std::endl;
 }
 
 void Level::Render(SDL_Renderer* renderer, const SDL_FRect& area)
@@ -83,7 +81,7 @@ void Level::Render(SDL_Renderer* renderer, const SDL_FRect& area)
     );
     SDL_RenderFillRect(renderer, &levelRect);
 
-    // ===== GRID =====
+    // Grid Render
     if (grid)
     {
     	SDL_SetRenderDrawColor(renderer, 60, 60, 60, 255); // grid color
@@ -95,11 +93,11 @@ void Level::Render(SDL_Renderer* renderer, const SDL_FRect& area)
     	float worldBottom = f_cameraPosition.y + (area.h / scale);
 	
     	// Snap start positions to grid
-    	float startX = std::floor(worldLeft / gridSize) * gridSize;
-    	float startY = std::floor(worldTop  / gridSize) * gridSize;
+    	float startX = std::floor(worldLeft / gridSizeX) * gridSizeX;
+    	float startY = std::floor(worldTop  / gridSizeY) * gridSizeY;
 	
     	// Vertical lines
-    	for (float x = startX; x < worldRight; x += gridSize)
+    	for (float x = startX; x < worldRight; x += gridSizeX)
     	{
     	    float screenX = area.x + (x - f_cameraPosition.x) * scale;
 	
@@ -110,7 +108,7 @@ void Level::Render(SDL_Renderer* renderer, const SDL_FRect& area)
     	}
 	
     	// Horizontal lines
-    	for (float y = startY; y < worldBottom; y += gridSize)
+    	for (float y = startY; y < worldBottom; y += gridSizeY)
     	{
     	    float screenY = area.y + (y - f_cameraPosition.y) * scale;
 	
