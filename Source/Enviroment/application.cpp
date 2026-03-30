@@ -3,7 +3,6 @@
 #include <iostream>
 #include <utility>
 #include <algorithm>
-#include <cassert>
 // SDL3
 #include <SDL3/SDL.h>
 // Imgui
@@ -21,13 +20,22 @@ Application::Application()
 	renderer = nullptr;
 
 	// Initializtion of external libraries
-	assert(InitSDL(), "[Error]: Couldn't initialize SDL3");
+	if (!InitSDL())
+	{
+		std::cerr << "[Error]: Couldn't initialize SDL3\n";
+	}
 	std::cout << "SDL3 initialized.\n";
 
-	assert(CreateContext(), "[ERROR]: Context could't be created");
+	if (CreateContext())
+	{
+		std::cerr << "[ERROR]: Context could't be created\n";
+	}
 	std::cout << "Window and Renderer created succesfully.\n";
 
-	assert(InitImgui(), "[ERROR] Imgui not linked.\n");
+	if (!InitImgui())
+	{
+		std::cerr << "[ERROR] Imgui not linked.\n";
+	}
 	std::cout << "Imgui initialized and linked correctly.\n";
 }
 
