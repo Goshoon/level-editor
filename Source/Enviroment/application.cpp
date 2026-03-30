@@ -26,7 +26,7 @@ Application::Application()
 	}
 	std::cout << "SDL3 initialized.\n";
 
-	if (CreateContext())
+	if (!CreateContext())
 	{
 		std::cerr << "[ERROR]: Context could't be created\n";
 	}
@@ -102,7 +102,8 @@ bool Application::CreateContext()
 
 void Application::Update() 
 {
-	UserInterface();
+	if (!hideMenuBar)
+		UserInterface();
 
 	// Get Window resolution updated
 	int winW = 0, winH = 0;
@@ -214,8 +215,15 @@ void Application::Input()
     }
 }
 
-void Application::InputReleased(SDL_Event* event) {}
-void Application::InputPressed(SDL_Event* event) {}
+void Application::InputReleased(SDL_Event* event) 
+{
+
+}
+
+void Application::InputPressed(SDL_Event* event) 
+{
+
+}
 
 void Application::Quit()
 {
@@ -236,6 +244,7 @@ void Application::UserInterface()
     	if (ImGui::MenuItem("Save")) {}
     	if (ImGui::MenuItem("Load")) {}
     	ImGui::Separator();
+    	if (ImGui::MenuItem("Close")) CloseAllLevels();
     	if (ImGui::MenuItem("Close all")) CloseAllLevels();
     	ImGui::Separator();
     	if (ImGui::MenuItem("Exit")) done = true;
@@ -263,6 +272,17 @@ void Application::UserInterface()
 			else
 			{
 				gridWindow = true;
+			}
+		}
+    	if (ImGui::MenuItem("hide menu bar"))
+		{
+			if (hideMenuBar)
+			{
+				hideMenuBar = false;
+			}
+			else
+			{
+				hideMenuBar = true;
 			}
 		}
     	ImGui::EndMenu();

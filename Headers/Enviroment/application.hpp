@@ -40,9 +40,10 @@ private:
 
 	bool gridWindow = false;
 	bool createWindow = false;
+	bool hideMenuBar = false;
 	bool grid = true;
 	short boundIndex = 1;
-
+	
 	// Run at the start
 	bool InitSDL();
 	bool InitImgui();
