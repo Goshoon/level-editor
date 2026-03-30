@@ -22,6 +22,8 @@ void Application::InitSDL()
 	{
 		std::cout << "SDL_Init Error: " << SDL_GetError() << std::endl;
 	}
+
+	SDL_SetCursor(cursor);
 }
 
 void Application::InitImgui()
@@ -105,6 +107,9 @@ void Application::DrawEverything()
 
 void Application::Input()
 {
+	mouse.mouseWheelUp = false;
+	mouse.mouseWheelDown = false;
+
 	SDL_Event event;
 	while ( SDL_PollEvent(&event))
 	{
@@ -114,6 +119,20 @@ void Application::Input()
 			case SDL_EVENT_QUIT:
 			{
 				done = true;
+			}
+			break;
+			case SDL_EVENT_MOUSE_WHEEL:
+			{
+				if (event.wheel.y > 0) // mouse wheel up
+				{
+					mouse.mouseWheelUp = true;
+					mouse.mouseWheelDown = false;
+				}
+				else if (event.wheel.y < 0) // mouse wheel up
+				{
+					mouse.mouseWheelUp = false;
+					mouse.mouseWheelDown = true;
+				}
 			}
 			break;
 			case SDL_EVENT_MOUSE_MOTION:
@@ -170,6 +189,8 @@ void Application::UserInterface()
     	if (ImGui::MenuItem("Save")) {}
     	if (ImGui::MenuItem("Load")) {}
     	ImGui::Separator();
+    	if (ImGui::MenuItem("Close all")) CloseAllLevels();
+    	ImGui::Separator();
     	if (ImGui::MenuItem("Exit")) done = true;
 
     	ImGui::EndMenu();
@@ -186,7 +207,14 @@ void Application::UserInterface()
     }
     if (ImGui::BeginMenu("View"))
 	{
-		if (ImGui::MenuItem("View grid")) {}
+		if (ImGui::MenuItem("View grid"))
+		{
+			if (currentBound->level->grid)
+				currentBound->level->grid = false;
+			
+			if (!currentBound->level->grid)
+				currentBound->level->grid = true;
+		}
     	ImGui::EndMenu();
     }
     ImGui::EndMainMenuBar();
@@ -288,6 +316,7 @@ void Application::UserInterface()
 
 void Application::Quit()
 {
+	SDL_DestroyCursor(cursor);
 	ImGui_ImplSDLRenderer3_Shutdown();
 	ImGui_ImplSDL3_Shutdown();
 	ImGui::DestroyContext();
@@ -297,4 +326,12 @@ void Application::Quit()
 void Application::NewLevel(const std::string& name, int width, int height)
 {
 	editingBounds.emplace_back(name, width, height);
+}
+
+void Application::CloseAllLevels()
+{
+	splitView.top = nullptr;
+	splitView.bottom = nullptr;
+	currentBound = nullptr;
+	editingBounds.clear();
 }

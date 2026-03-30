@@ -19,6 +19,7 @@ class Application
 {
 private:
   	// Inputs and window data
+  	SDL_Cursor* cursor = SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_POINTER);
   	SDL_FRect windowArea = { 0.0f, 0.0f, 1920.0f, 1080.0f };
 	MouseState mouse;
 
@@ -38,6 +39,7 @@ private:
 	void InputReleased(SDL_Event* event);
 	void InputPressed(SDL_Event* event);
 	void NewLevel(const std::string& name, int width, int height);
+	void CloseAllLevels();
 public:
 	Application();	// Initialization of Inputs, Window and Renderer
 	~Application();

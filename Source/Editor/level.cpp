@@ -18,15 +18,16 @@ void Level::Update(MouseState& mouse, const SDL_FRect& area)
 {
 	if (dragging)
 	{
-    	float dx = mouse.f_mousePosition.x - f_oldMousePosition.x;
-    	float dy = mouse.f_mousePosition.y - f_oldMousePosition.y;
+    	float dx = (mouse.f_mousePosition.x - f_oldMousePosition.x) / scale;
+    	float dy = (mouse.f_mousePosition.y - f_oldMousePosition.y) / scale;
 
     	f_cameraPosition.x -= dx;
     	f_cameraPosition.y -= dy;
 
     	f_oldMousePosition = mouse.f_mousePosition;
 	}
-	std::cout << dragging << " : "  << mouse.f_mousePosition.y << " : " << area.h << std::endl;
+
+	//std::cout << dragging << " : "  << mouse.f_mousePosition.y << " : " << area.h << std::endl;
 
 	if (mouse.f_mousePosition.y < area.h && mouse.f_mousePosition.y > area.y) // on level panel bounds
 	{
@@ -40,6 +41,15 @@ void Level::Update(MouseState& mouse, const SDL_FRect& area)
 
 	if (!mouse.mouseButtonRight) // Mouse Wheel button later
 		dragging = false;
+
+	if (mouse.mouseWheelUp)
+		scale+=0.05;
+
+	if (mouse.mouseWheelDown)
+		scale-=0.05;
+
+	scale = std::clamp(scale, 0.8f, 5.0f);
+	//std::cout << mouse.mouseWheelDown << " : " << mouse.mouseWheelUp << " : " << scale << std::endl;
 }
 
 void Level::Render(SDL_Renderer* renderer, const SDL_FRect& area)
@@ -50,13 +60,13 @@ void Level::Render(SDL_Renderer* renderer, const SDL_FRect& area)
 
     // Enable clipping to panel
     SDL_Rect clipRect;
-	clipRect.x = (int)area.x;
-	clipRect.y = (int)area.y;
-	clipRect.w = (int)area.w;
-	clipRect.h = (int)area.h;
+    clipRect.x = (int)area.x;
+    clipRect.y = (int)area.y;
+    clipRect.w = (int)area.w;
+    clipRect.h = (int)area.h;
 
-	SDL_SetRenderClipRect(renderer, &clipRect);
-	
+    SDL_SetRenderClipRect(renderer, &clipRect);
+    
     // Level rect (world → screen)
     SDL_FRect levelRect;
     levelRect.x = area.x + (levelPosition.x - f_cameraPosition.x) * scale;
@@ -64,7 +74,7 @@ void Level::Render(SDL_Renderer* renderer, const SDL_FRect& area)
     levelRect.w = levelPosition.z * scale;
     levelRect.h = levelPosition.w * scale;
 
-    // Draw level
+    // Draw level background
     SDL_SetRenderDrawColor(renderer,
         rgba_backgroundColor.x,
         rgba_backgroundColor.y,
@@ -72,6 +82,44 @@ void Level::Render(SDL_Renderer* renderer, const SDL_FRect& area)
         rgba_backgroundColor.w
     );
     SDL_RenderFillRect(renderer, &levelRect);
+
+    // ===== GRID =====
+    if (grid)
+    {
+    	SDL_SetRenderDrawColor(renderer, 60, 60, 60, 255); // grid color
+	
+    	// Determine visible world bounds
+    	float worldLeft   = f_cameraPosition.x;
+    	float worldTop    = f_cameraPosition.y;
+    	float worldRight  = f_cameraPosition.x + (area.w / scale);
+    	float worldBottom = f_cameraPosition.y + (area.h / scale);
+	
+    	// Snap start positions to grid
+    	float startX = std::floor(worldLeft / gridSize) * gridSize;
+    	float startY = std::floor(worldTop  / gridSize) * gridSize;
+	
+    	// Vertical lines
+    	for (float x = startX; x < worldRight; x += gridSize)
+    	{
+    	    float screenX = area.x + (x - f_cameraPosition.x) * scale;
+	
+    	    SDL_RenderLine(renderer,
+    	        (int)screenX, (int)area.y,
+    	        (int)screenX, (int)(area.y + area.h)
+    	    );
+    	}
+	
+    	// Horizontal lines
+    	for (float y = startY; y < worldBottom; y += gridSize)
+    	{
+    	    float screenY = area.y + (y - f_cameraPosition.y) * scale;
+	
+    	    SDL_RenderLine(renderer,
+    	        (int)area.x, (int)screenY,
+    	        (int)(area.x + area.w), (int)screenY
+    	    );
+    	}
+	}
 
     // Disable clipping
     SDL_SetRenderClipRect(renderer, nullptr);

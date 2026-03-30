@@ -53,6 +53,6 @@ void SplitView::Render(SDL_Renderer* renderer, const SDL_FRect& area)
 	}
 	else
 	{
-		// std::cout << "Error: no bottom panel to display!\n";
+		std::cout << "Error: no bottom panel to display!\n";
 	}
 }
