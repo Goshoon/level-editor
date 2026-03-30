@@ -1,5 +1,8 @@
 #pragma once
-#include <SDL3/SDL.h>
+// SDL3
+struct SDL_Frect;
+struct SDL_Renderer;
+// Own
 #include "panel.hpp"
 #include "mouseState.hpp"
 

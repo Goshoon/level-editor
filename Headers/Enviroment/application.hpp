@@ -56,6 +56,7 @@ private:
 
 	// Level handling
 	void NewLevel(const std::string& name, int width, int height);
+	void CloseCurrentLevel();
 	void CloseAllLevels();
 public:
 	Application();	// Initialization of Inputs, Window and Renderer

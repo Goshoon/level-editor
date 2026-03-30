@@ -18,6 +18,7 @@ Application::Application()
 	// Setup Platform/Renderer backends
 	window = nullptr;
 	renderer = nullptr;
+	editingBounds.reserve(10);
 
 	// Initializtion of external libraries
 	if (!InitSDL())
@@ -244,7 +245,7 @@ void Application::UserInterface()
     	if (ImGui::MenuItem("Save")) {}
     	if (ImGui::MenuItem("Load")) {}
     	ImGui::Separator();
-    	if (ImGui::MenuItem("Close")) CloseAllLevels();
+    	if (ImGui::MenuItem("Close")) CloseCurrentLevel();
     	if (ImGui::MenuItem("Close all")) CloseAllLevels();
     	ImGui::Separator();
     	if (ImGui::MenuItem("Exit")) done = true;
@@ -414,7 +415,19 @@ void Application::NewLevel(const std::string& name, int width, int height)
 	if (editingBounds.empty())
 		boundIndex = 0;
 
-	editingBounds.emplace_back(name, width, height);
+	EditingBound eb = EditingBound(name, width, height);
+	editingBounds.emplace_back(std::move(eb));
+}
+
+void Application::CloseCurrentLevel()
+{
+	if (!editingBounds.empty())
+	{
+		splitView.top = nullptr;
+		splitView.bottom = nullptr;
+		currentBound = nullptr;
+		editingBounds.erase(editingBounds.begin() + boundIndex);
+	}
 }
 
 void Application::CloseAllLevels()

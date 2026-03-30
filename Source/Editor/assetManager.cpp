@@ -1,4 +1,5 @@
 #include "assetManager.hpp"
+#include <SDL3/SDL.h>
 
 AssetManager::AssetManager() {}
 
