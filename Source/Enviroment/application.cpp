@@ -3,6 +3,7 @@
 #include <iostream>
 #include <utility>
 #include <algorithm>
+#include <cassert>
 // SDL3
 #include <SDL3/SDL.h>
 // Imgui
@@ -12,33 +13,44 @@
 // Own
 #include "enums.hpp"
 
+/* Constructors */
 Application::Application()
 {
 	// Setup Platform/Renderer backends
 	window = nullptr;
 	renderer = nullptr;
 
-	InitSDL();
-	CreateContext();
-	InitImgui();
+	// Initializtion of external libraries
+	assert(InitSDL(), "[Error]: Couldn't initialize SDL3");
+	std::cout << "SDL3 initialized.\n";
+
+	assert(CreateContext(), "[ERROR]: Context could't be created");
+	std::cout << "Window and Renderer created succesfully.\n";
+
+	assert(InitImgui(), "[ERROR] Imgui not linked.\n");
+	std::cout << "Imgui initialized and linked correctly.\n";
 }
 
 Application::~Application()
 {
+	// IDK if i have to do this just making sure cause its a pointer
 	delete currentBound;
 }
 
-void Application::InitSDL()
+/* External libraries */
+bool Application::InitSDL()
 {
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) != 0)
+	if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS))
 	{
 		std::cout << "SDL_Init Error: " << SDL_GetError() << std::endl;
+		return false;
 	}
 
 	SDL_SetCursor(cursor);
+	return true;
 }
 
-void Application::InitImgui()
+bool Application::InitImgui()
 {
 	// IMGUI initialization
 	IMGUI_CHECKVERSION();
@@ -51,9 +63,11 @@ void Application::InitImgui()
 
     ImGui_ImplSDL3_InitForSDLRenderer(window, renderer);
     ImGui_ImplSDLRenderer3_Init(renderer);
+    return true;
 }
 
-void Application::CreateContext()
+/* Application enviroment */
+bool Application::CreateContext()
 {
 	// SDL initialization
 	window = SDL_CreateWindow(
@@ -65,6 +79,7 @@ void Application::CreateContext()
 	if (!window)
 	{
 		std::cout << "Window creation error: " << SDL_GetError() << std::endl;
+		return false;
 	}
 
 	renderer = SDL_CreateRenderer(window, nullptr);
@@ -72,7 +87,9 @@ void Application::CreateContext()
 	if (!renderer)
 	{
 		std::cout << "Renderer creation error: " << SDL_GetError() << std::endl;
+		return false;
 	}
+	return true;
 }
 
 void Application::Update() 
@@ -96,7 +113,7 @@ void Application::Update()
 	}
 
 	if (editingBounds.size() == 1) // if only one element, always focus on the only
-		currentBound = &editingBounds.front();
+		currentBound = &editingBounds.at(boundIndex);
 }
 
 void Application::Display() 
@@ -192,6 +209,16 @@ void Application::Input()
 void Application::InputReleased(SDL_Event* event) {}
 void Application::InputPressed(SDL_Event* event) {}
 
+void Application::Quit()
+{
+	SDL_DestroyCursor(cursor);
+	ImGui_ImplSDLRenderer3_Shutdown();
+	ImGui_ImplSDL3_Shutdown();
+	ImGui::DestroyContext();
+	SDL_Quit();
+}
+
+/* Views */
 void Application::UserInterface()
 {
 	ImGui::BeginMainMenuBar();
@@ -219,7 +246,7 @@ void Application::UserInterface()
     }
     if (ImGui::BeginMenu("View"))
 	{
-		if (ImGui::MenuItem("grid"))
+		if (ImGui::MenuItem("Grid"))
 		{
 			if (gridWindow)
 			{
@@ -353,17 +380,12 @@ void Application::UserInterface()
 	}
 }
 
-void Application::Quit()
-{
-	SDL_DestroyCursor(cursor);
-	ImGui_ImplSDLRenderer3_Shutdown();
-	ImGui_ImplSDL3_Shutdown();
-	ImGui::DestroyContext();
-	SDL_Quit();
-}
-
+/* Level logic */
 void Application::NewLevel(const std::string& name, int width, int height)
 {
+	if (editingBounds.empty())
+		boundIndex = 0;
+
 	editingBounds.emplace_back(name, width, height);
 }
 
