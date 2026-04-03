@@ -20,19 +20,21 @@ struct SDL_FRect;
 union SDL_Event;
 // Own
 #include "splitView.hpp"
-#include "mouseState.hpp"
 #include "editingBound.hpp"
+#include "mouseState.hpp"
+#include "keyboardState.hpp"
 
 class Application
 {
 private:
   	// Inputs and window data
+  	KeyboardState keyboard;
+  	MouseState mouse;
   	SDL_Cursor* cursor = nullptr;
-  	SDL_FRect windowArea;
 
 	// Panel manager
 	SplitView splitView;
-	MouseState mouse;
+	SDL_FRect windowArea;
 
 	// Level Manager
 	std::vector<EditingBound> editingBounds;
@@ -64,9 +66,7 @@ public:
 
 	SDL_Window* window;
 	SDL_Renderer* renderer;
-
 	bool done = false;
-
 
 	void Update();
 	void Input(); // Get all app inputs

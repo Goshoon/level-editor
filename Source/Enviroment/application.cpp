@@ -118,7 +118,7 @@ void Application::Update()
 	{
 		splitView.top = currentBound->level.get();
 		splitView.bottom = currentBound->assetManager.get();
-		splitView.Update(mouse, windowArea);
+		splitView.Update(keyboard, mouse, windowArea);
 		currentBound->level->Update(mouse, splitView.topRect);
 	}
 
@@ -218,12 +218,26 @@ void Application::Input()
 
 void Application::InputReleased(SDL_Event* event) 
 {
-
+	switch(event->key.key)
+	{
+		case SDLK_TAB:
+		{
+			keyboard.tab = false;
+		}
+		break;
+	}
 }
 
 void Application::InputPressed(SDL_Event* event) 
 {
-
+	switch(event->key.key)
+	{
+		case SDLK_TAB:
+		{
+			keyboard.tab = true;
+		}
+		break;
+	}
 }
 
 void Application::Quit()
