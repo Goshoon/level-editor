@@ -5,6 +5,7 @@
 #include <algorithm>
 // SDL3
 #include <SDL3/SDL.h>
+#include <SDL3_image/SDL_image.h>
 // Imgui
 #include "imgui.h"
 #include "imgui_impl_sdl3.h"
@@ -18,7 +19,7 @@ Application::Application()
 	// Setup Platform/Renderer backends
 	window = nullptr;
 	renderer = nullptr;
-	editingBounds.reserve(10);
+	editingBounds.reserve(20);
 
 	// Initializtion of external libraries
 	if (!InitSDL())
@@ -38,13 +39,17 @@ Application::Application()
 		std::cerr << "[ERROR] Imgui not linked.\n";
 	}
 	std::cout << "Imgui initialized and linked correctly.\n";
+
+	if (!LoadTextures())
+	{
+		std::cerr << "Couldn't load textures.\n";
+	}
+	std::cout << "All textures loaded correctly\n";
+
+	topbar.displayButton.image = textures["button"];
 }
 
-Application::~Application()
-{
-	// IDK if i have to do this just making sure cause its a pointer
-	delete currentBound;
-}
+Application::~Application() {}
 
 /* External libraries */
 bool Application::InitSDL()
@@ -92,12 +97,19 @@ bool Application::CreateContext()
 	}
 
 	renderer = SDL_CreateRenderer(window, nullptr);
+	SDL_SetRenderVSync(renderer, 1);
 
 	if (!renderer)
 	{
 		std::cout << "Renderer creation error: " << SDL_GetError() << std::endl;
 		return false;
 	}
+	return true;
+}
+
+bool Application::LoadTextures()
+{
+	textures["button"] = IMG_LoadTexture(renderer, "Resources/Images/topbar_hidden.png");
 	return true;
 }
 
@@ -114,6 +126,9 @@ void Application::Update()
 	windowArea.w = static_cast<float>(winW);
 	windowArea.h = static_cast<float>(winH);
 
+	topbar.resolution = &windowArea;
+	topbar.mouse = &mouse;
+
 	if (currentBound != nullptr)
 	{
 		splitView.top = currentBound->level.get();
@@ -124,6 +139,8 @@ void Application::Update()
 
 	if (editingBounds.size() == 1) // if only one element, always focus on the only
 		currentBound = &editingBounds.at(boundIndex);
+
+	topbar.Update();
 }
 
 void Application::Display() 
@@ -136,6 +153,8 @@ void Application::DrawEverything()
 	// Bug: Using the ImGui context makes the level dissapear
 	if (currentBound != nullptr)
 		splitView.Render(renderer, windowArea);
+
+	topbar.Render(renderer);
 	
 	ImGui::Render();
 	ImGui_ImplSDLRenderer3_RenderDrawData(ImGui::GetDrawData(), renderer);
@@ -246,6 +265,7 @@ void Application::Quit()
 	ImGui_ImplSDLRenderer3_Shutdown();
 	ImGui_ImplSDL3_Shutdown();
 	ImGui::DestroyContext();
+	SDL_DestroyRenderer(renderer);
 	SDL_Quit();
 }
 
@@ -262,12 +282,15 @@ void Application::UserInterface()
     	if (ImGui::MenuItem("Close")) CloseCurrentLevel();
     	if (ImGui::MenuItem("Close all")) CloseAllLevels();
     	ImGui::Separator();
+    	if (ImGui::MenuItem("Export")) {}
+    	ImGui::Separator();
     	if (ImGui::MenuItem("Exit")) done = true;
 
     	ImGui::EndMenu();
     }
     if (ImGui::BeginMenu("Edit"))
 	{
+		if (ImGui::MenuItem("Level size")) {}
     	ImGui::EndMenu();
     }
     if (ImGui::BeginMenu("Assets"))
@@ -289,7 +312,7 @@ void Application::UserInterface()
 				gridWindow = true;
 			}
 		}
-    	if (ImGui::MenuItem("hide menu bar"))
+    	if (ImGui::MenuItem("menu bar"))
 		{
 			if (hideMenuBar)
 			{

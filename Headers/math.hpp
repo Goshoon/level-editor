@@ -1,5 +1,12 @@
 #pragma once
 //#include <SDL3/SDL.h>
+
+template<typename T, typename U>
+T Lerp(const T& a, const T& b, const U& t)
+{
+    return a + (b - a) * t;
+}
+
 template<typename T>
 struct vec2
 {

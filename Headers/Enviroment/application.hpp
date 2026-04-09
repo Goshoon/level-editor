@@ -12,6 +12,7 @@
 // Libraries
 #include <vector>
 #include <string>
+#include <unordered_map>
 // Interface SDL3
 struct SDL_Window;
 struct SDL_Renderer;
@@ -23,6 +24,7 @@ union SDL_Event;
 #include "editingBound.hpp"
 #include "mouseState.hpp"
 #include "keyboardState.hpp"
+#include "topbar.hpp"
 
 class Application
 {
@@ -33,12 +35,14 @@ private:
   	SDL_Cursor* cursor = nullptr;
 
 	// Panel manager
-	SplitView splitView;
 	SDL_FRect windowArea;
+	SplitView splitView;
 
 	// Level Manager
 	std::vector<EditingBound> editingBounds;
 	EditingBound* currentBound = nullptr;
+	std::unordered_map<std::string, SDL_Texture*> textures;
+	Topbar topbar = Topbar();
 
 	bool gridWindow = false;
 	bool createWindow = false;
@@ -50,6 +54,7 @@ private:
 	bool InitSDL();
 	bool InitImgui();
 	bool CreateContext();
+	bool LoadTextures();
 
 	// Regular methods
 	void UserInterface();

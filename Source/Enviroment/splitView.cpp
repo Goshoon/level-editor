@@ -8,8 +8,12 @@
 void SplitView::Update(KeyboardState& keyboard, MouseState& mouse, const SDL_FRect& area)
 {
 	// Drag windows!
+	short divisionBorder = 20;
 	float divisionLine = area.h * ratio;
-	short divisionBorder = 5;
+
+	if (tabCooldown >= -2)
+		tabCooldown--;
+	
 	if (mouse.mouseButtonLeft)
 	{
 		if (mouse.f_mousePosition.y < divisionLine+divisionBorder && mouse.f_mousePosition.y > divisionLine-divisionBorder)
@@ -23,7 +27,6 @@ void SplitView::Update(KeyboardState& keyboard, MouseState& mouse, const SDL_FRe
 		dragging = false;
 	}
 
-	tabCooldown --;
 	if (keyboard.tab && tabCooldown <= 0)
 	{
 		tabCooldown = 600;

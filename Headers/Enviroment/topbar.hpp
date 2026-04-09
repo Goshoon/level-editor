@@ -1,10 +1,33 @@
 #pragma once
+// Libraries
 #include <iostream>
+//SDL3
+struct SDL_Texture;
+// Own
 #include "tab.hpp"
 #include "panel.hpp"
-class Topbar : public Panel
+struct MouseState;
+
+struct Button
 {
+	SDL_Texture* image;
+	vec4<float> src;
+	vec4<float> dst;
+};
+
+class Topbar
+{
+private:
+	vec2<float> windowRes;
 public:
 	Topbar();
-	virtual void Render(SDL_Renderer* renderer, const SDL_FRect& area) = 0;
+	void Update();
+	void Render(SDL_Renderer* renderer);
+
+	Panel* panel = nullptr;
+	Button displayButton;
+	SDL_FRect* resolution = nullptr;
+	MouseState* mouse = nullptr;
+
+	bool showContent = false;
 };
