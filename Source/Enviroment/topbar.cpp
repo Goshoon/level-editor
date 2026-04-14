@@ -26,11 +26,13 @@ Topbar::Topbar()
 void Topbar::Update()
 {
 	// std::cout << "POINTING: " << resolution << " AMMOUNT: " << resolution->w << " : " << displayButton.dst.x << std::endl;
+	float cursorSize = 8.0f;
+	
 	if (!showContent)
 	{
 		displayButton.dst.x = Lerp(displayButton.dst.x, 0.0f, 0.05f);
 
-		SDL_FRect tmpMouse = { mouse->f_mousePosition.x, mouse->f_mousePosition.y, 32, 32 };
+		SDL_FRect tmpMouse = { mouse->f_mousePosition.x, mouse->f_mousePosition.y, cursorSize, cursorSize };
 		SDL_FRect tmpDisplay = { displayButton.dst.x, displayButton.dst.y, displayButton.dst.z, displayButton.dst.w };
 		bool onArea = Collide( tmpDisplay, tmpMouse );
 
@@ -42,7 +44,7 @@ void Topbar::Update()
 		displayButton.dst.x = Lerp(displayButton.dst.x, resolution->w-64, 0.02f);
 		//displayButton.dst.y = 28;
 
-		SDL_FRect tmpMouse = { mouse->f_mousePosition.x, mouse->f_mousePosition.y, 32, 32 };
+		SDL_FRect tmpMouse = { mouse->f_mousePosition.x, mouse->f_mousePosition.y, cursorSize, cursorSize };
 		SDL_FRect tmpDisplay = { displayButton.dst.x, displayButton.dst.y, displayButton.dst.z, displayButton.dst.w };
 		bool onArea = Collide( tmpDisplay , tmpMouse );
 
