@@ -26,8 +26,7 @@ Topbar::Topbar()
 void Topbar::Update()
 {
 	// std::cout << "POINTING: " << resolution << " AMMOUNT: " << resolution->w << " : " << displayButton.dst.x << std::endl;
-	float cursorSize = 8.0f;
-	
+	const float cursorSize = 8.0f;
 	if (!showContent)
 	{
 		displayButton.dst.x = Lerp(displayButton.dst.x, 0.0f, 0.05f);
