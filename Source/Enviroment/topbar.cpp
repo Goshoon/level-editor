@@ -5,7 +5,6 @@
 #include "math.hpp"
 #include "mouseState.hpp"
 #include "collision.hpp"
-
 // HEX: 34618a
 // RGB: 52, 97, 138
 Topbar::Topbar()
@@ -31,9 +30,8 @@ void Topbar::Update()
 	{
 		displayButton.dst.x = Lerp(displayButton.dst.x, 0.0f, 0.05f);
 
-		SDL_FRect tmpMouse = { mouse->f_mousePosition.x, mouse->f_mousePosition.y, cursorSize, cursorSize };
-		SDL_FRect tmpDisplay = { displayButton.dst.x, displayButton.dst.y, displayButton.dst.z, displayButton.dst.w };
-		bool onArea = Collide( tmpDisplay, tmpMouse );
+		vec4<float> tmpMouse = { mouse->f_mousePosition.x, mouse->f_mousePosition.y, cursorSize, cursorSize };
+		bool onArea = Collide( tmpMouse, displayButton.dst );
 
 		if (mouse->mouseButtonLeft && onArea)
 			showContent = true;
@@ -43,9 +41,8 @@ void Topbar::Update()
 		displayButton.dst.x = Lerp(displayButton.dst.x, resolution->w-64, 0.02f);
 		//displayButton.dst.y = 28;
 
-		SDL_FRect tmpMouse = { mouse->f_mousePosition.x, mouse->f_mousePosition.y, cursorSize, cursorSize };
-		SDL_FRect tmpDisplay = { displayButton.dst.x, displayButton.dst.y, displayButton.dst.z, displayButton.dst.w };
-		bool onArea = Collide( tmpDisplay , tmpMouse );
+		vec4<float> tmpMouse = { mouse->f_mousePosition.x, mouse->f_mousePosition.y, cursorSize, cursorSize };
+		bool onArea = Collide( tmpMouse, displayButton.dst );
 
 		if (mouse->mouseButtonLeft && onArea)
 			showContent = false;
