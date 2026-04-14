@@ -21,6 +21,7 @@ private:
 	vec2<float> windowRes;
 public:
 	Topbar();
+	
 	void Update();
 	void Render(SDL_Renderer* renderer);
 

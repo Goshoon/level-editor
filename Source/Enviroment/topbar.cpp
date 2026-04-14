@@ -1,16 +1,22 @@
 #include "topbar.hpp"
+// External libraries
 #include <SDL3/SDL.h>
+// Own
 #include "math.hpp"
 #include "mouseState.hpp"
+#include "collision.hpp"
+
 // HEX: 34618a
 // RGB: 52, 97, 138
 Topbar::Topbar()
 {
+	// Sprite
 	displayButton.src.x = 0;
 	displayButton.src.y = 0;
 	displayButton.src.z = 256;
 	displayButton.src.w = 256;
 
+	// Destination
 	displayButton.dst.x = 0;
 	displayButton.dst.y = 28;
 	displayButton.dst.z = 32;
@@ -19,11 +25,16 @@ Topbar::Topbar()
 
 void Topbar::Update()
 {
-	//std::cout << "POINTING: " << resolution << " AMMOUNT: " << resolution->w << " : " << displayButton.dst.x << std::endl;
+	// std::cout << "POINTING: " << resolution << " AMMOUNT: " << resolution->w << " : " << displayButton.dst.x << std::endl;
 	if (!showContent)
 	{
 		displayButton.dst.x = Lerp(displayButton.dst.x, 0.0f, 0.05f);
-		if (mouse->mouseButtonLeft)
+
+		SDL_FRect tmpMouse = { mouse->f_mousePosition.x, mouse->f_mousePosition.y, 32, 32 };
+		SDL_FRect tmpDisplay = { displayButton.dst.x, displayButton.dst.y, displayButton.dst.z, displayButton.dst.w };
+		bool onArea = Collide( tmpDisplay, tmpMouse );
+
+		if (mouse->mouseButtonLeft && onArea)
 			showContent = true;
 	}
 	else
@@ -31,7 +42,11 @@ void Topbar::Update()
 		displayButton.dst.x = Lerp(displayButton.dst.x, resolution->w-64, 0.02f);
 		//displayButton.dst.y = 28;
 
-		if (mouse->mouseButtonLeft)
+		SDL_FRect tmpMouse = { mouse->f_mousePosition.x, mouse->f_mousePosition.y, 32, 32 };
+		SDL_FRect tmpDisplay = { displayButton.dst.x, displayButton.dst.y, displayButton.dst.z, displayButton.dst.w };
+		bool onArea = Collide( tmpDisplay , tmpMouse );
+
+		if (mouse->mouseButtonLeft && onArea)
 			showContent = false;
 		
 	}
@@ -43,6 +58,7 @@ void Topbar::Render(SDL_Renderer* renderer)
 	SDL_SetRenderDrawColor(renderer, 52, 97, 138, 255);
 	SDL_FRect navigationArea = { 0, 28, displayButton.dst.x, 32 };
 	SDL_RenderFillRect(renderer, &navigationArea);
+
 	// Draw navigation button
 	SDL_FRect src = { displayButton.src.x, displayButton.src.y, displayButton.src.z, displayButton.src.w };
 	SDL_FRect dst = { displayButton.dst.x, displayButton.dst.y, displayButton.dst.z, displayButton.dst.w };

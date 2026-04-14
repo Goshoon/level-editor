@@ -121,6 +121,7 @@ void Application::Update()
 	// Get Window resolution updated
 	int winW = 0, winH = 0;
 	SDL_GetWindowSize(window, &winW, &winH);
+	
 	windowArea.x = 0;
 	windowArea.y = 0;
 	windowArea.w = static_cast<float>(winW);
